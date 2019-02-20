@@ -1,5 +1,6 @@
 package student.rest;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import student.entity.Student;
+import student.entity.StudentNotFoundException;
 import student.service.StudentService;
 
 @RestController
@@ -31,6 +33,9 @@ public class StudentRestController {
 	@GetMapping("/students/{studentId}")
 	public Student getStudent( @PathVariable int studentId){
 		Student theStudent =studentService.findStudentById(studentId);
+		if(theStudent==null){
+			throw new StudentNotFoundException("Student  not found with id =  "+studentId);
+		}
 		return theStudent;
 		
 	}
@@ -51,6 +56,10 @@ public class StudentRestController {
 	 // get the student and delete
 	 @DeleteMapping("/students/{studentId}")
 	 public String deleteStudent(@PathVariable int studentId){
+		 Student s =studentService.findStudentById(studentId);
+		 if( s==null){
+			 throw new StudentNotFoundException("We can delete student with id "+studentId);
+		 }
 		 studentService.deleteStudentById(studentId);
 		 return  "Deleted the student id "+studentId;
 		 
